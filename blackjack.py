@@ -6,7 +6,7 @@ class Blackjack():
 	"""
 
 	def __init__(self):
-		self.deck = Deck()
+		self.deck = Deck(5)
 		self.playerHand = list() # player
 		self.dealerHand = list() # dealer
 		self.playerWins = 0 # number of times the player wins
@@ -15,7 +15,7 @@ class Blackjack():
 
 	# resets the game for another run of simulation
 	def _reset_game(self):
-		self.deck.reset_deck()
+		self.deck.reset_deck(5)
 		self.playerHand = list() # player
 		self.dealerHand = list() # dealer
 		self._initialize_player_1()
@@ -44,159 +44,6 @@ class Blackjack():
 		card = self.deck.deal_card()
 		# deals the card to the player hand
 		self.dealerHand.append(card)
-
-	# plays out the game by simulating both players with game visuals
-	def simulate_game_with_visuals(self):
-
-		dealerWin = "Dealer"
-		playerWin = "Player"
-
-		# print for game visuals
-		print("\n********** Begin simulation for one game of Blackjack! **********\n")
-
-		# first simulate player's decisions with the probabilistic model
-		self._simulate_player_1_with_visuals()
-
-		# print for game visuals
-		print("~~~~~")
-
-		# if player busts, then dealer wins automatically
-		if self._check_bust(self.playerHand):
-			# print for game visuals
-			print("\nPlayer is BUSTED!")
-			self._declare_winner(dealerWin)
-			return dealerWin
-		# if player gets a Blackjack, then player wins right away
-		if self._check_blackjack(self.playerHand):
-			# print for game visuals
-			print("\nPlayer has Blackjack!")
-			self._declare_winner(playerWin)
-			return	playerWin
-
-		# second simulate the dealer's decisions if player isn't a bust
-		self._simulate_player_2_with_visuals()
-
-		# if dealer busts, then player wins automatically
-		if self._check_bust(self.dealerHand):
-			# print for game visuals
-			print("\nDealer is BUSTED!")
-			self._declare_winner(playerWin)
-			return playerWin
-		# if dealer gets a Blackjack, then dealer wins right away
-		if self._check_blackjack(self.playerHand):
-			# print for game visuals
-			print("\nDealer has Blackjack!")
-			self._declare_winner(dealerWin)
-			return dealerWin
-
-		# compare hands to declare winner
-		winningPlayer = self._compare_hand_values(self.playerHand, self.dealerHand)
-		self._declare_winner(winningPlayer)
-		return winningPlayer
-
-	# simulates the first player and their actions with game visuals
-	def _simulate_player_1_with_visuals(self):
-		# the model assumes this player is the dealer, with actions to Hit until card value is >= 17
-		playerSum = self._calculate_sum(self.playerHand)
-
-		# print for game visuals
-		print("Player Sum:", playerSum, "Player Hand:", self.playerHand)
-
-		# current bust probability
-		bustProb = self._compute_bust_probability(self.playerHand)
-
-		# continue to hit if bust proability is below 50%
-		while bustProb < .5:
-
-			self._deal_player_1()
-
-			# update the new sum
-			playerSum = self._calculate_sum(self.playerHand)
-
-			# print for game visuals
-			print("Player Sum:", playerSum, "Player Hand:", self.playerHand)	
-
-			# update bust probability
-			bustProb = self._compute_bust_probability(self.playerHand)
-
-	# simulates the second player and their actions with game visuals
-	def _simulate_player_2_with_visuals(self):
-		# the model assumes this player is the dealer, with actions to Hit until card value is >= 17
-		dealerSum = self._calculate_sum(self.dealerHand)
-
-		# print for game visuals
-		print("Dealer Sum:", dealerSum, "Dealer Hand:", self.dealerHand)
-
-		while dealerSum < 17:
-
-			self._deal_player_2()
-
-			# update the new sum
-			dealerSum = self._calculate_sum(self.dealerHand)	
-
-			# print visuals to keep track of dealer hand
-			print("Dealer Sum:", dealerSum, "Dealer Hand:", self.dealerHand)
-
-	# plays out the game by simulating both players without game visuals
-	def simulate_game_no_visuals(self):
-
-		dealerWin = "Dealer"
-		playerWin = "Player"
-
-		# first simulate player's decisions with the Markov Chain model
-		self._simulate_player_1_no_visuals()
-
-		# if player busts, then dealer wins automatically
-		if self._check_bust(self.playerHand):
-			return dealerWin
-		# if player gets a Blackjack, then player wins right away
-		if self._check_blackjack(self.playerHand):
-			return	playerWin
-
-		# second simulate the dealer's decisions if player isn't a bust
-		self._simulate_player_2_no_visuals()
-
-		# if dealer busts, then player wins automatically
-		if self._check_bust(self.dealerHand):
-			return playerWin
-		# if dealer gets a Blackjack, then dealer wins right away
-		if self._check_blackjack(self.playerHand):
-			return dealerWin
-
-		# compare hands to declare winner
-		winningPlayer = self._compare_hand_values(self.playerHand, self.dealerHand)
-		return winningPlayer
-
-	# simulates the first player and their actions without game visuals
-	def _simulate_player_1_no_visuals(self):
-		# the model assumes this player is the dealer, with actions to Hit until card value is >= 17
-		playerSum = self._calculate_sum(self.playerHand)
-
-		# current bust probability
-		bustProb = self._compute_bust_probability(self.playerHand)
-
-		# continue to hit if bust proability is below 50%
-		while bustProb < .5:
-
-			self._deal_player_1()
-
-			# update the new sum
-			playerSum = self._calculate_sum(self.playerHand)
-
-			# update bust probability
-			bustProb = self._compute_bust_probability(self.playerHand)
-
-	# simulates the second player and their actions without game visuals
-	def _simulate_player_2_no_visuals(self):
-		# the model assumes this player is the dealer, with actions to Hit until card value is >= 17
-		dealerSum = self._calculate_sum(self.dealerHand)
-
-		while dealerSum < 17:
-
-			self._deal_player_2()
-
-			# update the new sum
-			dealerSum = self._calculate_sum(self.dealerHand)	
 
 	# declares the winner of the game at the end of simulation with pretty prints
 	def _declare_winner(self, winner):
@@ -312,6 +159,159 @@ class Blackjack():
 
 		return bustProbability
 
+	# plays out the game by simulating both players with game visuals
+	def simulate_game_with_visuals(self):
+
+		dealerWin = "Dealer"
+		playerWin = "Player"
+
+		# print for game visuals
+		print("\n********** Begin simulation for one game of Blackjack! **********\n")
+
+		# first simulate player's decisions with the probabilistic model
+		self._simulate_player_1_with_visuals()
+
+		# print for game visuals
+		print("~~~~~")
+
+		# if player busts, then dealer wins automatically
+		if self._check_bust(self.playerHand):
+			# print for game visuals
+			print("\nPlayer is BUSTED!")
+			self._declare_winner(dealerWin)
+			return dealerWin
+		# if player gets a Blackjack, then player wins right away
+		if self._check_blackjack(self.playerHand):
+			# print for game visuals
+			print("\nPlayer has Blackjack!")
+			self._declare_winner(playerWin)
+			return	playerWin
+
+		# second simulate the dealer's decisions if player isn't a bust
+		self._simulate_player_2_with_visuals()
+
+		# if dealer busts, then player wins automatically
+		if self._check_bust(self.dealerHand):
+			# print for game visuals
+			print("\nDealer is BUSTED!")
+			self._declare_winner(playerWin)
+			return playerWin
+		# if dealer gets a Blackjack, then dealer wins right away
+		if self._check_blackjack(self.playerHand):
+			# print for game visuals
+			print("\nDealer has Blackjack!")
+			self._declare_winner(dealerWin)
+			return dealerWin
+
+		# compare hands to declare winner
+		winningPlayer = self._compare_hand_values(self.playerHand, self.dealerHand)
+		self._declare_winner(winningPlayer)
+		return winningPlayer
+
+	# simulates the player and their actions with game visuals
+	def _simulate_player_1_with_visuals(self):
+		# the model assumes this player is the dealer, with actions to Hit until card value is >= 17
+		playerSum = self._calculate_sum(self.playerHand)
+
+		# print for game visuals
+		print("Player Sum:", playerSum, "Player Hand:", self.playerHand)
+
+		# current bust probability
+		bustProb = self._compute_bust_probability(self.playerHand)
+
+		# continue to hit if bust proability is below 50%
+		while bustProb < .5:
+
+			self._deal_player_1()
+
+			# update the new sum
+			playerSum = self._calculate_sum(self.playerHand)
+
+			# print for game visuals
+			print("Player Sum:", playerSum, "Player Hand:", self.playerHand)	
+
+			# update bust probability
+			bustProb = self._compute_bust_probability(self.playerHand)
+
+	# simulates the dealer and their actions with game visuals
+	def _simulate_player_2_with_visuals(self):
+		# the model assumes this player is the dealer, with actions to Hit until card value is >= 17
+		dealerSum = self._calculate_sum(self.dealerHand)
+
+		# print for game visuals
+		print("Dealer Sum:", dealerSum, "Dealer Hand:", self.dealerHand)
+
+		while dealerSum < 17:
+
+			self._deal_player_2()
+
+			# update the new sum
+			dealerSum = self._calculate_sum(self.dealerHand)	
+
+			# print visuals to keep track of dealer hand
+			print("Dealer Sum:", dealerSum, "Dealer Hand:", self.dealerHand)
+
+	# plays out the game by simulating both players without game visuals
+	def simulate_game_no_visuals(self):
+
+		dealerWin = "Dealer"
+		playerWin = "Player"
+
+		# first simulate player's decisions with the Markov Chain model
+		self._simulate_player_1_no_visuals()
+
+		# if player busts, then dealer wins automatically
+		if self._check_bust(self.playerHand):
+			return dealerWin
+		# if player gets a Blackjack, then player wins right away
+		if self._check_blackjack(self.playerHand):
+			return	playerWin
+
+		# second simulate the dealer's decisions if player isn't a bust
+		self._simulate_player_2_no_visuals()
+
+		# if dealer busts, then player wins automatically
+		if self._check_bust(self.dealerHand):
+			return playerWin
+		# if dealer gets a Blackjack, then dealer wins right away
+		if self._check_blackjack(self.playerHand):
+			return dealerWin
+
+		# compare hands to declare winner
+		winningPlayer = self._compare_hand_values(self.playerHand, self.dealerHand)
+		return winningPlayer
+
+	# simulates the player and their actions without game visuals
+	def _simulate_player_1_no_visuals(self):
+		# the model assumes this player is the dealer, with actions to Hit until card value is >= 17
+		playerSum = self._calculate_sum(self.playerHand)
+
+		# current bust probability
+		bustProb = self._compute_bust_probability(self.playerHand)
+
+		# continue to hit if bust proability is below 50%
+		while bustProb < .5:
+
+			self._deal_player_1()
+
+			# update the new sum
+			playerSum = self._calculate_sum(self.playerHand)
+
+			# update bust probability
+			bustProb = self._compute_bust_probability(self.playerHand)
+
+	# simulates the dealer and their actions without game visuals
+	def _simulate_player_2_no_visuals(self):
+		# the model assumes this player is the dealer, with actions to Hit until card value is >= 17
+		dealerSum = self._calculate_sum(self.dealerHand)
+
+		while dealerSum < 17:
+
+			self._deal_player_2()
+
+			# update the new sum
+			dealerSum = self._calculate_sum(self.dealerHand)	
+
 	# simulates a given numer of games and records statistics of the player's wins
 	def _simulate_multiple_games(self, numGames):
 
@@ -348,10 +348,10 @@ if __name__ == '__main__':
 	game = Blackjack()
 	
 	# play the game
-	game.simulate_game_with_visuals()
+	# game.simulate_game_with_visuals()
 	
 	# simulate multiple games
-	game._simulate_multiple_games(1000)
+	game._simulate_multiple_games(100000)
 
 
 
