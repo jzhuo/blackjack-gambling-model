@@ -5,10 +5,11 @@ class Blackjack():
 	Represents the game and state of Blackjack for two players.
 	"""
 
-	def __init__(self):
+	def __init__(self, confidence):
 		self.deck = Deck(5)
 		self.playerHand = list() # player
 		self.dealerHand = list() # dealer
+		self.confidence = 0
 		self.playerWins = 0 # number of times the player wins
 		self.dealerWins = 0 # number of times the dealer wins
 		self._reset_game()
@@ -20,6 +21,10 @@ class Blackjack():
 		self.dealerHand = list() # dealer
 		self._initialize_player_1()
 		self._initialize_player_2()
+
+	# sets the confidence for the player in the model
+	def set_confidence(self, newConfidence):
+		self.confidence = newConfidence
 
 	# deals the first two cards to the player at the start of the game
 	def _initialize_player_1(self):
@@ -220,7 +225,7 @@ class Blackjack():
 		bustProb = self._compute_bust_probability(self.playerHand)
 
 		# continue to hit if bust proability is below 50%
-		while bustProb < .5:
+		while bustProb < self.confidence:
 
 			self._deal_player_1()
 
@@ -290,7 +295,7 @@ class Blackjack():
 		bustProb = self._compute_bust_probability(self.playerHand)
 
 		# continue to hit if bust proability is below 50%
-		while bustProb < .5:
+		while bustProb < self.confidence:
 
 			self._deal_player_1()
 
@@ -345,14 +350,25 @@ class Blackjack():
 
 
 if __name__ == '__main__':
-	game = Blackjack()
+
+	initialConfidence = .1
+
+	game = Blackjack(initialConfidence)
 	
 	# play the game
 	# game.simulate_game_with_visuals()
 	
 	# simulate multiple games
-	game._simulate_multiple_games(100000)
+	#game._simulate_multiple_games(100000)
 
+	# simulate multiple games with varying confidence
+	for confidence in range(1,10):
+		game.set_confidence(confidence/10)
+		print("\n********** ********** ********** ********** **********")
+		print("********** Simulating player with confidence:", confidence/10, "**********")
+		print("Player hits when probability of busting is below confidence")
+		game._simulate_multiple_games(10000)
+		print("\n\n")
 
 
 
