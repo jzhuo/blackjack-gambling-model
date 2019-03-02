@@ -5,11 +5,11 @@ class Blackjack():
 	Represents the game and state of Blackjack for two players.
 	"""
 
-	def __init__(self, confidence):
+	def __init__(self):
 		self.deck = Deck(5)
 		self.playerHand = list() # player
 		self.dealerHand = list() # dealer
-		self.confidence = 0
+		self.confidence = .5 # player hits if probability of bust is below confidence
 		self.playerWins = 0 # number of times the player wins
 		self.dealerWins = 0 # number of times the dealer wins
 		self._reset_game()
@@ -215,9 +215,8 @@ class Blackjack():
 
 	# simulates the player and their actions with game visuals
 	def _simulate_player_1_with_visuals(self):
-		# the model assumes this player is the dealer, with actions to Hit until card value is >= 17
+		# the total value of player's cards
 		playerSum = self._calculate_sum(self.playerHand)
-
 		# print for game visuals
 		print("Player Sum:", playerSum, "Player Hand:", self.playerHand)
 
@@ -288,8 +287,6 @@ class Blackjack():
 
 	# simulates the player and their actions without game visuals
 	def _simulate_player_1_no_visuals(self):
-		# the model assumes this player is the dealer, with actions to Hit until card value is >= 17
-		playerSum = self._calculate_sum(self.playerHand)
 
 		# current bust probability
 		bustProb = self._compute_bust_probability(self.playerHand)
@@ -298,9 +295,6 @@ class Blackjack():
 		while bustProb < self.confidence:
 
 			self._deal_player_1()
-
-			# update the new sum
-			playerSum = self._calculate_sum(self.playerHand)
 
 			# update bust probability
 			bustProb = self._compute_bust_probability(self.playerHand)
@@ -318,7 +312,7 @@ class Blackjack():
 			dealerSum = self._calculate_sum(self.dealerHand)	
 
 	# simulates a given numer of games and records statistics of the player's wins
-	def _simulate_multiple_games(self, numGames):
+	def simulate_multiple_games(self, numGames):
 
 		print("\n********** Begin simulation of", numGames, "games! **********")
 
@@ -348,42 +342,28 @@ class Blackjack():
 		print("Dealer winrate:", str(round(dealerWinrate * 100, 1)) + "%")
 		print("Tie rate:", str(round(tieRate * 100, 1)) + "%\n")
 
+	# simulates the game of Blackjack with varying confidence levels 
+	# for drawing statistics for class Math456 - Mathematical Modeling
+	def simulate_varying_confidence(self, numGames): 
+		for confidence in range(1,10):
+			game.set_confidence(confidence/10)
+			print("\n********** ********** ********** ********** **********")
+			print("********** Simulating player with confidence:", confidence/10, "**********")
+			print("Player hits when probability of busting is below:", confidence/10)
+			game.simulate_multiple_games(100)
+			print("\n\n")
+
 
 if __name__ == '__main__':
 
-	initialConfidence = .1
-
-	game = Blackjack(initialConfidence)
+	game = Blackjack()
 	
-	# play the game
-	# game.simulate_game_with_visuals()
+	# play the game once with visuals
+	#game.simulate_game_with_visuals()
 	
-	# simulate multiple games
+	# simulate multiple games with no visuals
 	#game._simulate_multiple_games(100000)
 
 	# simulate multiple games with varying confidence
-	for confidence in range(1,10):
-		game.set_confidence(confidence/10)
-		print("\n********** ********** ********** ********** **********")
-		print("********** Simulating player with confidence:", confidence/10, "**********")
-		print("Player hits when probability of busting is below confidence")
-		game._simulate_multiple_games(10000)
-		print("\n\n")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	game.simulate_varying_confidence(100)
 
