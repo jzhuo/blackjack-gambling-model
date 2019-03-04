@@ -7,16 +7,13 @@ class Deck():
 	Deck class is used to store the cards of a deck
 	"""
 
-	def __init__(self, numDecks):
+	def __init__(self, decks):
 		self.cards = None
-		self.reset_deck(numDecks)
-
-	# returns the stored deck
-	def get_cards(self):
-		return self.cards
+		self.numDecks = decks
+		self.reset_deck()
 
 	# creates a new deck and resets the deck
-	def reset_deck(self, numDecks):
+	def reset_deck(self):
 		
 		'''
 		Numerical values mean themselves but
@@ -30,7 +27,7 @@ class Deck():
 		newCards = []
 
 		# uses the specified number of decks, 5 decks are used in blackjack
-		for deck in range(numDecks):
+		for deckCount in range(self.numDecks):
 			for cardRank in cardRanks:
 				for cardSuit in range(4):
 					newCards.append(cardRank)
@@ -40,6 +37,10 @@ class Deck():
 			random.shuffle(newCards)
 
 		self.cards = newCards
+
+	# returns the stored deck
+	def get_cards(self):
+		return self.cards
 
 	# deals a randomly selected card from the deck
 	def deal_card(self):

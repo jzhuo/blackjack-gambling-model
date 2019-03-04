@@ -45,8 +45,5 @@ class QLearning():
 			return 11 # always count A
 
 
-
-
-
 if __name__ == "__main__":
 	pass
