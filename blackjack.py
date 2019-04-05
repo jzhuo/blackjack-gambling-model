@@ -422,7 +422,7 @@ class Blackjack():
             bustProb = self._compute_bust_probability(playerHand)
 
             # print the hand and bust probability
-            print("Hand and Bust Probability:", playerHand, "  -  ", bustProb)
+            print("Hand:", playerHand, "  -  ", "Bust Probability:", bustProb)
 
             # reset the cards in the deck
             fiveDeck.reset_deck()
@@ -452,10 +452,10 @@ if __name__ == '__main__':
     #game._simulate_multiple_games(100000)
 
     # simulate multiple games with varying confidence
-    gamesToPlay = 100000
+    gamesToPlay = 1000000
     game.simulate_varying_confidence(gamesToPlay)
     
     # print bust probability for all starting hands
     handCombinations = 2
-    #game.calculate_starting_hand_statistics(handCombinations)
+    game.calculate_hand_statistics(handCombinations)
 
