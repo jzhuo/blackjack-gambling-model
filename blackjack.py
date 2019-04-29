@@ -1,6 +1,4 @@
 from deck import Deck
-import itertools as it
-import copy
 
 
 class Blackjack():
